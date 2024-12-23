@@ -1,7 +1,22 @@
 <template>
-  <FullCalendar ref="refCalendar" :options="calendarOptions" />
+  <el-container>
+    <el-header class="border">Header</el-header>
+    <el-container>
+      <el-aside class="border sideMenu">
+        <VCalendar
+          style="width: 100%"
+          v-model="today"
+          @dayclick="dayClick"
+          @did-move="didMove"
+          :attributes="attributes"
+      /></el-aside>
+      <el-main class="main">
+        <FullCalendar ref="refCalendar" :options="calendarOptions" />
+      </el-main>
+    </el-container>
+  </el-container>
   <!-- START DIALOG -->
-  <el-dialog v-model="dialog.calendarForm" :title="title" center>
+  <el-dialog v-model="dialog.eventForm" :title="title" width="600" center>
     <el-form @submit.prevent="submitForm" label-position="top">
       <el-form-item label="Calendar">
         <el-select v-model="form.calendarId" placeholder="Calendar">
@@ -11,7 +26,61 @@
       <el-form-item label="Event Name">
         <el-input v-model="form.eventName" placeholder="Event Name" />
       </el-form-item>
+      <el-form-item label="Is Recurring?">
+        <el-radio-group v-model="form.isRecurring">
+          <el-radio label="Yes" :value="true" />
+          <el-radio label="No" :value="false" />
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="Date Range">
+        <VDatePicker v-model.range="form.dateRange">
+          <template #default="{ inputValue, inputEvents }">
+            <div class="flex justify-center items-center">
+              <div class="row">
+                <div class="col">
+                  <el-input
+                    :value="inputValue.start"
+                    v-on="inputEvents.start"
+                    placeholder="Start Date"
+                  />
+                </div>
+                <div class="col">
+                  <el-input :value="inputValue.end" v-on="inputEvents.end" placeholder="End Date" />
+                </div>
+              </div>
+            </div>
+          </template>
+        </VDatePicker>
+      </el-form-item>
+      <div class="row">
+        <el-form-item class="col-4" label="Start Time">
+          <el-time-picker
+            :disabled="form.dateRange.start == ''"
+            @change="changeStartTime"
+            v-model="form.timeStarted"
+            placeholder="Start Time"
+          />
+        </el-form-item>
+        <el-form-item class="col" label="End Time">
+          <el-time-picker
+            :disabled="form.dateRange.end == ''"
+            @change="changeEndTime"
+            v-model="form.timeEnded"
+            placeholder="End Time"
+          />
+        </el-form-item>
+      </div>
+      <div v-if="form.isRecurring == true">
+        <el-checkbox
+          v-for="day in days"
+          :key="day.id"
+          :label="day.label"
+          :value="day.id"
+          size="large"
+        />
+      </div>
     </el-form>
+
     <template #footer>
       <div class="d-flex justify-content-end">
         <el-button type="primary" @click="submitForm">Confirm</el-button>
@@ -34,21 +103,43 @@ export default {
   },
   data() {
     return {
+      days: [
+        { id: 1, label: 'Monday' },
+        { id: 2, label: 'Tuesday' },
+        { id: 3, label: 'Wednesday' },
+        { id: 4, label: 'Thursday' },
+        { id: 5, label: 'Friday' },
+        { id: 6, label: 'Saturday' },
+        { id: 7, label: 'Sunday' },
+      ],
+      currentMonth: '',
+      currentYear: '',
+      currentDay: '',
+      firstDayOfMonth: '',
+      lastDayOfMonth: '',
       title: '',
       form: {
         calendarId: '',
         eventName: '',
+        isRecurring: false,
         dateStarted: '',
         dateEnded: '',
         timeStarted: '',
         timeEnded: '',
+        dateRange: {
+          start: '',
+          end: '',
+        },
       },
       dialog: {
-        calendarForm: false,
+        eventForm: false,
       },
       today: new Date(),
       calendarApi: '',
       calendarOptions: {
+        datesSet: (info) => {
+          this.datesSet(info)
+        },
         headerToolbar: {
           start: 'todayCustom,prevCustom,nextCustom',
           center: 'title',
@@ -56,57 +147,48 @@ export default {
         },
         // Custom Button
         customButtons: {
-          // Create Event
           createEvent: {
             text: 'Create Event',
             click: () => {
               this.createEvent()
             },
           },
-          // Today
           todayCustom: {
             text: 'today',
             click: () => {
               this.todayCustom()
             },
           },
-          // Previous Month
           prevCustom: {
             text: 'prev',
             click: () => {
               this.prevCustom()
             },
           },
-          // Next Month
           nextCustom: {
             text: 'next',
             click: () => {
               this.nextCustom()
             },
           },
-
-          // Month View
           monthCustom: {
             text: 'month',
             click: () => {
               this.monthCustom()
             },
           },
-          // Week View
           weekCustom: {
             text: 'week',
             click: () => {
               this.weekCustom()
             },
           },
-          // Day View
           dayCustom: {
             text: 'day',
             click: () => {
               this.dayCustom()
             },
           },
-          // List View
           listCustom: {
             text: 'list',
             click: () => {
@@ -147,10 +229,24 @@ export default {
       },
     }
   },
+  computed: {
+    attributes() {
+      return [
+        {
+          highlight: {
+            start: { fillMode: 'outline' },
+            base: { fillMode: 'light' },
+            end: { fillMode: 'outline' },
+          },
+          dates: { start: new Date(this.firstDayOfMonth), end: new Date(this.lastDayOfMonth) },
+        },
+      ]
+    },
+  },
   methods: {
     createEvent() {
       this.title = 'Create Event'
-      this.dialog.calendarForm = true
+      this.dialog.eventForm = true
     },
     todayCustom() {
       this.today = new Date()
@@ -158,11 +254,14 @@ export default {
     },
     prevCustom() {
       this.calendarApi.prev()
+      const currentDate = this.calendarApi.getDate()
+      this.calendarApi.gotoDate(currentDate.toISOString())
     },
     nextCustom() {
       this.calendarApi.next()
+      const currentDate = this.calendarApi.getDate()
+      this.calendarApi.gotoDate(currentDate.toISOString())
     },
-
     monthCustom() {
       this.calendarApi.changeView('dayGridMonth')
     },
@@ -177,20 +276,60 @@ export default {
     },
 
     // METHODS
+    datesSet(info) {
+      let lastDay = new Date(info.view.activeEnd)
+      lastDay.setDate(lastDay.getDate() - 1)
+      this.firstDayOfMonth = info.view.activeStart.toISOString()
+      this.lastDayOfMonth = lastDay.toISOString()
+      this.currentMonth = info.view.activeStart.toISOString().substr(5, 2)
+      this.currentYear = info.view.activeStart.toISOString().substr(0, 4)
+    },
+    didMove(info) {
+      this.calendarApi.gotoDate(`${info[0].id}-01T00:00:00`)
+    },
+    dayClick(info) {
+      console.log(info)
+      this.calendarApi.changeView('timeGridDay')
+      this.calendarApi.gotoDate(info.endDate)
+    },
     submitForm() {
-      console.log('AW')
+      const payload = {
+        calendarId: this.form.calendarId,
+        eventName: this.form.eventName,
+        isRecurring: this.form.isRecurring,
+        dateTimeStarted: this.form.dateRange.start,
+        dateTimeEnded: this.form.dateRange.end,
+      }
+      console.log(payload)
+    },
+    changeStartTime(info) {
+      const hours = info.toISOString().substr(11, 2)
+      const minutes = info.toISOString().substr(14, 2)
+      const seconds = info.toISOString().substr(17, 2)
+      this.form.dateRange.start.setHours(hours, minutes, seconds)
+    },
+    changeEndTime(info) {
+      const hours = info.toISOString().substr(11, 2)
+      const minutes = info.toISOString().substr(14, 2)
+      const seconds = info.toISOString().substr(17, 2)
+      this.form.dateRange.end.setHours(hours, minutes, seconds)
     },
 
-    handleDateClick: function (arg) {
-      alert('date click! ' + arg.dateStr)
-    },
     handleDateRange: function (info) {
       alert('selected ' + info.startStr + ' to ' + info.endStr)
     },
   },
   mounted() {
     this.calendarApi = this.$refs.refCalendar.getApi()
-    console.log(this.$refs.refCalendar) // Check if the ref is correctly set
   },
 }
 </script>
+
+<style>
+.main {
+  min-height: 90vh;
+}
+.sideMenu {
+  width: 250px;
+}
+</style>
