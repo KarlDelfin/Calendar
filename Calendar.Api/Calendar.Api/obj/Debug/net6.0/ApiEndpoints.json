@@ -107,7 +107,7 @@
   {
     "ContainingType": "Calendar.Api.Controllers.CalendarController",
     "Method": "GetCalendarByUserId",
-    "RelativePath": "api/Calendar/{userId}",
+    "RelativePath": "api/Calendar/User/{userId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -126,6 +126,58 @@
         "Name": "ElementsPerPage",
         "Type": "System.Int32",
         "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Calendar.Api.Controllers.CalendarEventController",
+    "Method": "AddCalendarEvent",
+    "RelativePath": "api/CalendarEvent",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "System.Collections.Generic.List\u00601[[Calendar.Api.DTO.CalendarEventDTO_POST, Calendar.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Calendar.Api.Controllers.CalendarEventController",
+    "Method": "UpdateCalendarEvent",
+    "RelativePath": "api/CalendarEvent",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "calendarEventId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "calendarEventGroupId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "actionStatus",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "dto",
+        "Type": "System.Collections.Generic.List\u00601[[Calendar.Api.DTO.CalendarEventDTO_POST, Calendar.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -180,24 +232,8 @@
   },
   {
     "ContainingType": "Calendar.Api.Controllers.CalendarEventController",
-    "Method": "DeleteCalendarEventByCalendarEventId",
-    "RelativePath": "api/CalendarEvent/{calendarEventId}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "calendarEventId",
-        "Type": "System.Guid",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Calendar.Api.Controllers.CalendarEventController",
     "Method": "MoveResizeEvent",
-    "RelativePath": "api/CalendarEvent/{calendarEventId}/MoveResize",
+    "RelativePath": "api/CalendarEvent/{calendarEventId}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -210,6 +246,22 @@
       {
         "Name": "dto",
         "Type": "Calendar.Api.DTO.CalendarEventDTO_MOVE",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Calendar.Api.Controllers.CalendarEventController",
+    "Method": "DeleteCalendarEventByCalendarEventId",
+    "RelativePath": "api/CalendarEvent/{calendarEventId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "calendarEventId",
+        "Type": "System.Guid",
         "IsRequired": true
       }
     ],
@@ -237,38 +289,6 @@
         "Name": "dateTimeEnded",
         "Type": "System.DateTime",
         "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Calendar.Api.Controllers.CalendarEventController",
-    "Method": "AddNonRecurringCalendarEvent",
-    "RelativePath": "api/CalendarEvent/NonRecurring",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "Calendar.Api.DTO.CalendarEventDTO_POST",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Calendar.Api.Controllers.CalendarEventController",
-    "Method": "AddRecurringCalendarEvent",
-    "RelativePath": "api/CalendarEvent/Recurring",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "System.Collections.Generic.List\u00601[[Calendar.Api.DTO.CalendarEventDTO_POST, Calendar.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []

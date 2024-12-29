@@ -58,7 +58,16 @@
         </div>
       </el-aside>
       <el-main class="main">
-        <FullCalendar ref="refCalendar" :options="calendarOptions" />
+        <div class="shadow" style="min-height: 80vh" v-if="isErrorFullCalendar">
+          <el-empty>
+            <el-button type="primary" @click="(getCalendarByUserId(), getCalendarEvent())"
+              >Refresh</el-button
+            >
+          </el-empty>
+        </div>
+        <div v-else>
+          <FullCalendar class="fullCalendar" ref="refCalendar" :options="calendarOptions" />
+        </div>
       </el-main>
     </el-container>
   </el-container>
@@ -126,7 +135,9 @@
     :openForm="dialog.calendarEventForm"
     @close="dialog.calendarEventForm = false"
     :handleDateRange="form.dateRange"
-    @refresh="getCalendarEvent"
+    @refresh="(getCalendarEvent(), (dialog.operation = false))"
+    :selectedDayList="selectedDays"
+    :daysList="daysList"
   />
   <!-- END CALENDAR EVENT FORM -->
 
@@ -160,6 +171,7 @@ export default {
   },
   data() {
     return {
+      isErrorFullCalendar: false,
       calendarEvent: {},
       calendarEventId: '',
       calendarEventGroupId: '',
@@ -182,6 +194,9 @@ export default {
       user: {},
 
       pickerKey: 0,
+
+      selectedDays: [],
+      daysList: [],
       days: [
         { label: 'Sunday', value: 0, checked: false },
         { label: 'Monday', value: 1, checked: false },
@@ -191,7 +206,6 @@ export default {
         { label: 'Friday', value: 5, checked: false },
         { label: 'Saturday', value: 6, checked: false },
       ],
-      selectedDays: [],
       currentMonth: '',
       currentYear: '',
       currentDay: '',
@@ -358,6 +372,10 @@ export default {
     attributes() {
       return [
         {
+          dot: 'red',
+          dates: this.calendarOptions.events,
+        },
+        {
           highlight: {
             start: { fillMode: 'outline' },
             base: { fillMode: 'light' },
@@ -505,6 +523,7 @@ export default {
           this.dialog.calendarEventForm = true
           axios.get(`${api}/CalendarEvent/${this.calendarEventId}`).then((response) => {
             this.calendarEvent = {
+              status: 'Just this one',
               calendarEventGroupId: response.data.calendarEventGroupId,
               calendarEventId: response.data.calendarEventId,
               calendarId: response.data.calendarId,
@@ -515,7 +534,7 @@ export default {
               dateTimeEnded: `${response.data.dateTimeEnded}`,
               startTime: `${response.data.dateTimeStarted}`,
               endTime: `${response.data.dateTimeEnded}`,
-              isRecurring: false,
+              isRecurring: true,
             }
           })
         }
@@ -530,6 +549,7 @@ export default {
             let timeEnded = response.data[response.data.length - 1].dateTimeEnded.substr(11, 19)
 
             this.calendarEvent = {
+              status: 'series',
               calendarEventGroupId: response.data[0].calendarEventGroupId,
               calendarEventId: response.data[0].calendarEventId,
               calendarId: response.data[0].calendarId,
@@ -540,8 +560,26 @@ export default {
               dateTimeEnded: `${dateEnded}T${timeEnded}`,
               startTime: `${timeStarted}`,
               endTime: `${timeEnded}`,
-              isRecurring: false,
+              isRecurring: true,
             }
+            // START RECURRING EVERY
+            const checkedDays = [false, false, false, false, false, false, false]
+            const selectedDays = []
+
+            response.data.forEach((item) => {
+              const dayOfWeek = new Date(item.dateTimeStarted).getDay()
+              if (!selectedDays.includes(dayOfWeek)) {
+                selectedDays.push(dayOfWeek)
+              }
+              checkedDays[dayOfWeek] = true
+            })
+
+            this.days.forEach((day) => {
+              day.checked = selectedDays.includes(day.value)
+            })
+            this.daysList = this.days
+            this.selectedDays = selectedDays
+            // END RECURRING EVERY
           })
         }
         return
@@ -553,6 +591,7 @@ export default {
           this.title = 'Edit Non-Recurring Event'
           axios.get(`${api}/CalendarEvent/${this.calendarEventId}`).then((response) => {
             this.calendarEvent = {
+              status: 'one',
               calendarEventGroupId: response.data.calendarEventGroupId,
               calendarEventId: response.data.calendarEventId,
               calendarId: response.data.calendarId,
@@ -563,7 +602,7 @@ export default {
               dateTimeEnded: `${response.data.dateTimeEnded}`,
               startTime: `${response.data.dateTimeStarted}`,
               endTime: `${response.data.dateTimeEnded}`,
-              isRecurring: false,
+              isRecurring: true,
             }
           })
           return
@@ -578,6 +617,7 @@ export default {
             let timeEnded = response.data[response.data.length - 1].dateTimeEnded.substr(11, 19)
 
             this.calendarEvent = {
+              status: 'series',
               calendarEventGroupId: response.data[0].calendarEventGroupId,
               calendarEventId: response.data[0].calendarEventId,
               calendarId: response.data[0].calendarId,
@@ -588,7 +628,7 @@ export default {
               dateTimeEnded: `${dateEnded}T${timeEnded}`,
               startTime: `${timeStarted}`,
               endTime: `${timeEnded}`,
-              isRecurring: false,
+              isRecurring: true,
             }
           })
         }
@@ -618,21 +658,12 @@ export default {
       }
       return currentMonth
     },
-    selectedDay(e) {
-      const index = this.selectedDays.indexOf(e)
-      if (index !== -1) {
-        this.selectedDays.splice(index, 1)
-      } else {
-        this.selectedDays.push(e)
-      }
-    },
 
     // CLEAR
     clear() {
       this.dialog.calendarEventForm = false
       this.dialog.recurringEvent = false
       this.dialog.operation = false
-      // this.form.calendarId = ''
       this.form.isRecurring = false
       this.calendarEventId = ''
       this.calendarEventGroupId = ''
@@ -650,6 +681,8 @@ export default {
       this.title = 'Create Event'
       this.dialog.calendarEventForm = true
       this.form.dateRange = {
+        weekClicked: this.weekClicked,
+        dayClicked: this.dayClicked,
         calendarId: this.form.calendarId,
         start: info.startStr,
         end: dateEnded,
@@ -660,7 +693,7 @@ export default {
     getCalendarByUserId() {
       axios
         .get(
-          `${api}/Calendar/${this.user.userId}?currentPage=${this.calendarPagination.currentPage}&elementsPerPage=${this.calendarPagination.elementsPerPage}`,
+          `${api}/Calendar/User/${this.user.userId}?currentPage=${this.calendarPagination.currentPage}&elementsPerPage=${this.calendarPagination.elementsPerPage}`,
         )
         .then((response) => {
           this.calendars = response.data.results
@@ -687,6 +720,7 @@ export default {
                 index === self.findIndex((event) => event.eventName === value.eventName),
             )
             this.calendarOptions.events = response.data.map((event) => {
+              // event.dateTimeEnded.setDate(event.dateTimeEnded.getDate() + 1)
               return {
                 id: event.calendarEventId,
                 title: event.eventName,
@@ -719,6 +753,13 @@ export default {
                 display: event.calendarEventGroupId != null ? 'list-item' : 'block',
               }
             })
+            loading.close()
+            this.clear()
+            this.dialog.operation = false
+            this.isErrorFullCalendar = false
+          })
+          .catch(() => {
+            this.isErrorFullCalendar = true
             loading.close()
           })
       }, 1000)
@@ -756,12 +797,22 @@ export default {
     deleteCalendarEvent() {
       // ENTIRE SERIES
       if (this.calendarEventGroupId != null && this.form.isRecurring == true) {
-        axios.delete(`${api}/CalendarEvent/${this.calendarEventGroupId}/Group`).then(() => {
-          ElMessage.success('Event deleted successfully')
-          this.dialog.operation = false
-          this.getCalendarEvent()
-          this.clear()
+        ElMessageBox.confirm('Do you want to delete this event?', 'Warning', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
+          type: 'warning',
         })
+          // CONFIRM
+          .then(() => {
+            axios.delete(`${api}/CalendarEvent/${this.calendarEventGroupId}/Group`).then(() => {
+              ElMessage.success('Event deleted successfully')
+              this.dialog.operation = false
+              this.getCalendarEvent()
+              this.clear()
+            })
+          })
+          // CANCEL
+          .catch(() => {})
         return
       }
       // JUST ONE OR NON-RECURRING
@@ -769,17 +820,49 @@ export default {
         (this.calendarEventGroupId != null && this.form.isRecurring == false) ||
         this.calendarEventGroupId == null
       ) {
-        axios.delete(`${api}/CalendarEvent/${this.calendarEventId}`).then(() => {
-          ElMessage.success('Event deleted successfully')
-          this.dialog.operation = false
-          this.getCalendarEvent()
-          this.clear()
+        ElMessageBox.confirm('Do you want to delete this event?', 'Warning', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
+          type: 'warning',
         })
+          // CONFIRM
+          .then(() => {
+            axios.delete(`${api}/CalendarEvent/${this.calendarEventId}`).then(() => {
+              ElMessage.success('Event deleted successfully')
+              this.dialog.operation = false
+              this.getCalendarEvent()
+              this.clear()
+            })
+          })
+          // CANCEL
+          .catch(() => {})
         return
       }
     },
     // MOVE / RESIZE EVENT
     moveResizeEvent(info) {
+      let dateTimeStarted = ''
+      let dateTimeEnded = ''
+      let calendarEventId = info.event.id
+      // MONTH LOGIC
+      if (this.weekClicked == false && this.dayClicked == false) {
+        let startDate = info.event.startStr.substr(0, 10)
+        let endDate = info.event.endStr.substr(0, 10)
+        let startTime = info.event.extendedProps.dateTimeStarted.substr(11, 19)
+        let endTime = info.event.extendedProps.dateTimeEnded.substr(11, 19)
+        dateTimeStarted = `${startDate}T${startTime}`
+        dateTimeEnded = `${endDate}T${endTime}`
+      }
+      // WEEK/DAY LOGIC
+      if (this.weekClicked == true || this.dayClicked == true) {
+        dateTimeStarted = info.event.startStr
+        dateTimeEnded = info.event.endStr
+      }
+
+      const payload = {
+        dateTimeStarted: dateTimeStarted,
+        dateTimeEnded: dateTimeEnded,
+      }
       ElMessageBox.confirm('Do you want to update this event?', 'Warning', {
         confirmButtonText: 'Confirm',
         cancelButtonText: 'Cancel',
@@ -787,32 +870,10 @@ export default {
       })
         // CONFIRM
         .then(() => {
-          let dateTimeStarted = ''
-          let dateTimeEnded = ''
-          let calendarEventId = info.event.id
-          // MONTH LOGIC
-          if (this.weekClicked == false && this.dayClicked == false) {
-            let startDate = info.event.startStr.substr(0, 10)
-            let endDate = info.event.endStr.substr(0, 10)
-            let startTime = info.event.extendedProps.dateTimeStarted.substr(11, 19)
-            let endTime = info.event.extendedProps.dateTimeEnded.substr(11, 19)
-            dateTimeStarted = `${startDate}T${startTime}`
-            dateTimeEnded = `${endDate}T${endTime}`
-          }
-          // WEEK/DAY LOGIC
-          if (this.weekClicked == true || this.dayClicked == true) {
-            dateTimeStarted = info.event.startStr
-            dateTimeEnded = info.event.endStr
-          }
-
-          const payload = {
-            dateTimeStarted: dateTimeStarted,
-            dateTimeEnded: dateTimeEnded,
-          }
           axios
-            .put(`${api}/CalendarEvent/${calendarEventId}/MoveResize`, payload)
+            .put(`${api}/CalendarEvent/${calendarEventId}`, payload)
             .then(() => {
-              ElMessage.success('Event moved successfully')
+              ElMessage.success('Event updated successfully')
               this.getCalendarByUserId()
               this.clear()
             })
@@ -867,6 +928,10 @@ export default {
 </script>
 
 <style>
+.fullCalendar {
+  text-decoration: none;
+  color: #000000;
+}
 .main {
   min-height: 90vh;
 }

@@ -66,18 +66,41 @@
           <el-time-picker format="HH:mm" v-model="form.startTime" placeholder="Start Time" />
         </el-form-item>
         <el-form-item class="col-4 timePicker" label="End Time">
-          <el-time-picker format="HH:mm" v-model="form.endTime" placeholder="End Time" />
+          <el-time-picker
+            format="HH:mm"
+            v-model="form.endTime"
+            placeholder="End Time"
+            :disabled-hours="disabledEndHours"
+          />
         </el-form-item>
       </div>
-      <div v-if="form.isRecurring == true">
+      <div v-if="form.isRecurring">
+        <el-divider content-position="left">Recurring Every</el-divider>
+
+        <!-- <div class="row d-flex pt-4">
+          <div class="col" v-for="(day, index) in days" :key="index">
+            <input
+              class="weekDayClass"
+              type="checkbox"
+              :id="'checkbox-' + day.label"
+              :value="day.value"
+              @change="selectedDay(day.value)"
+              :checked="day.checked"
+            />
+            <label class="px-1">{{ day.label }}</label>
+          </div>
+        </div> -->
         <el-checkbox
+          v-for="(day, index) in days"
+          :key="index"
           @change="selectedDay(day.value)"
-          v-for="day in days"
-          :key="day.value"
           :label="day.label"
           :value="day.value"
           size="large"
-        />
+          :checked="day.checked"
+        >
+          {{ day.label }}
+        </el-checkbox>
       </div>
     </el-form>
 
@@ -94,6 +117,8 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 const api = import.meta.env.VITE_APP_API_URL
+import { v4 as uuidv4 } from 'uuid'
+
 export default {
   props: {
     calendars: Array,
@@ -101,9 +126,11 @@ export default {
     title: String,
     handleDateRange: Object,
     calendarEvent: Object,
+    selectedDayList: Array,
   },
   data() {
     return {
+      actionStatus: '',
       calendarEventId: '',
       calendarEventGroupId: '',
       calendarList: [],
@@ -126,7 +153,18 @@ export default {
           end: '',
         },
         isDatePickerClicked: false,
+        isDayAdded: true,
       },
+      selectedDays: [],
+      days: [
+        { label: 'Sun', value: 0, checked: false },
+        { label: 'Mon', value: 1, checked: false },
+        { label: 'Tue', value: 2, checked: false },
+        { label: 'Wed', value: 3, checked: false },
+        { label: 'Thu', value: 4, checked: false },
+        { label: 'Fri', value: 5, checked: false },
+        { label: 'Sat', value: 6, checked: false },
+      ],
       // PREDEFINED COLORS
       predefineColors: [
         '#ff4500',
@@ -147,6 +185,24 @@ export default {
     }
   },
   methods: {
+    // DISABLE PREVIOUS HOURS SELECTED BY START TIME
+    disabledEndHours() {
+      const startHour = this.form.startTime ? new Date(this.form.startTime).getHours() : null
+
+      if (startHour !== null) {
+        return Array.from({ length: 24 }, (_, i) => i).filter((hour) => hour <= startHour)
+      }
+
+      return []
+    },
+    selectedDay(e) {
+      const index = this.selectedDays.indexOf(e)
+      if (index !== -1) {
+        this.selectedDays.splice(index, 1)
+      } else {
+        this.selectedDays.push(e)
+      }
+    },
     clear() {
       this.$emit('close')
       this.form.calendarId = ''
@@ -154,34 +210,103 @@ export default {
       this.form.eventDescription = ''
       this.form.eventColor = '#409EFF'
       this.form.isRecurring = false
+
       this.form.dateRange = { start: '', end: '' }
       this.form.startTime = ''
       this.form.endTime = ''
+      this.selectedDays.length = 0
+      this.selectedDays = []
+      this.isDatePickerClicked = false
+      this.isDayAdded = true
     },
     submitForm() {
+      if (
+        this.form.eventName == '' ||
+        this.form.eventDescription == '' ||
+        this.form.eventColor == ''
+      ) {
+        ElMessage.info('Please input fields!')
+        return
+      }
+      let calendarEvents = []
+      let calendarEventGroupId = uuidv4()
       let startDate = new Date(this.form.dateRange.start)
       let endDate = new Date(this.form.dateRange.end)
       let startTime = new Date(this.form.startTime)
       let endTime = new Date(this.form.endTime)
-
       startTime.setHours(startTime.getHours() + 8)
       endTime.setHours(endTime.getHours() + 8)
+      // CREATE CALENDAR EVENT
+      if (this.title == 'Create Event') {
+        // RECURRING (WITH SELECTED DAYS)
+        if (this.form.isRecurring == true && this.selectedDays.length > 0) {
+          while (startDate <= endDate) {
+            let newStartDate = new Date(startDate)
+            const startDay = startDate.getDay()
 
-      // RECURRING
-      if (this.form.isRecurring == true) {
-        let calendarEvents = []
-        // Add 1 day in start and end date if VCalendar date is changed
-        if (this.isDatePickerClicked == true) {
-          startDate.setDate(startDate.getDate() + 1)
-          endDate.setDate(endDate.getDate() + 1)
+            if (this.selectedDays.includes(startDay)) {
+              // Add 1 day if VCalendar is changed
+              if (
+                (this.isDatePickerClicked == true && this.isDayAdded == false) ||
+                (this.isDatePickerClicked == false && this.isDayAdded == false)
+              ) {
+                newStartDate.setDate(newStartDate.getDate())
+              } else {
+                newStartDate.setDate(newStartDate.getDate() + 1)
+              }
+
+              let newStartTime = startTime.toISOString().substr(11, 19)
+              let newEndTime = endTime.toISOString().substr(11, 19)
+
+              calendarEvents.push({
+                calendarId: this.form.calendarId,
+                eventName: this.form.eventName,
+                eventDescription: this.form.eventDescription,
+                eventColor: this.form.eventColor,
+                isRecurring: this.form.isRecurring,
+                dateTimeStarted: `${newStartDate.toISOString().substr(0, 10)}T${newStartTime}`,
+                dateTimeEnded: `${newStartDate.toISOString().substr(0, 10)}T${newEndTime}`,
+                calendarEventGroupId: calendarEventGroupId,
+              })
+            }
+            startDate.setDate(startDate.getDate() + 1)
+          }
         }
+        // RECURRING
+        if (this.form.isRecurring == true) {
+          if (this.isDatePickerClicked == true) {
+            startDate.setDate(startDate.getDate() + 1)
+            endDate.setDate(endDate.getDate() + 1)
+          }
+          let newStartTime = startTime.toISOString().substr(11, 19)
+          let newEndTime = endTime.toISOString().substr(11, 19)
 
-        let newStartTime = startTime.toISOString().substr(11, 19)
-        let newEndTime = endTime.toISOString().substr(11, 19)
+          while (startDate <= endDate) {
+            let newStartDate = startDate.toISOString().substr(0, 10)
 
-        while (startDate <= endDate) {
+            calendarEvents.push({
+              calendarId: this.form.calendarId,
+              eventName: this.form.eventName,
+              eventDescription: this.form.eventDescription,
+              eventColor: this.form.eventColor,
+              isRecurring: this.form.isRecurring,
+              dateTimeStarted: `${newStartDate}T${newStartTime}`,
+              dateTimeEnded: `${newStartDate}T${newEndTime}`,
+              calendarEventGroupId: calendarEventGroupId,
+            })
+            startDate.setDate(startDate.getDate() + 1)
+          }
+        }
+        // NON-RECURRING
+        if (this.form.isRecurring == false) {
+          if (this.isDatePickerClicked == true) {
+            startDate.setDate(startDate.getDate() + 1)
+            endDate.setDate(endDate.getDate() + 1)
+          }
           let newStartDate = startDate.toISOString().substr(0, 10)
-          // let newEndDate = endDate.toISOString().substr(0, 10)
+          let newEndDate = endDate.toISOString().substr(0, 10)
+          let newStartTime = startTime.toISOString().substr(11, 19)
+          let newEndTime = endTime.toISOString().substr(11, 19)
 
           calendarEvents.push({
             calendarId: this.form.calendarId,
@@ -190,12 +315,13 @@ export default {
             eventColor: this.form.eventColor,
             isRecurring: this.form.isRecurring,
             dateTimeStarted: `${newStartDate}T${newStartTime}`,
-            dateTimeEnded: `${newStartDate}T${newEndTime}`,
+            dateTimeEnded: `${newEndDate}T${newEndTime}`,
+            calendarEventGroupId: null,
           })
-          startDate.setDate(startDate.getDate() + 1)
         }
+
         axios
-          .post(`${api}/CalendarEvent/Recurring`, calendarEvents)
+          .post(`${api}/CalendarEvent`, calendarEvents)
           .then(() => {
             ElMessage.success('Event added successfully')
             this.clear()
@@ -206,40 +332,89 @@ export default {
           })
         return
       }
-      // NON-RECURRING
-      if (this.form.isRecurring == false) {
-        // Add 1 day in start and end date if VCalendar date is changed
-        if (this.isDatePickerClicked == true) {
-          startDate.setDate(startDate.getDate() + 1)
-          endDate.setDate(endDate.getDate() + 1)
+      // UPDATE CALENDAR EVENT
+      else {
+        if (this.calendarEventGroupId == null) {
+          this.calendarEventGroupId = '00000000-0000-0000-0000-000000000000'
         }
 
-        let newStartDate = startDate.toISOString().substr(0, 10)
-        let newEndDate = endDate.toISOString().substr(0, 10)
-        let newStartTime = startTime.toISOString().substr(11, 19)
-        let newEndTime = endTime.toISOString().substr(11, 19)
+        // RECURRING (WITH SELECTED DAYS)
+        if (this.form.isRecurring == true && this.selectedDays.length > 0) {
+          while (startDate <= endDate) {
+            let newStartDate = new Date(startDate)
+            const startDay = startDate.getDay()
 
-        const payload = {
-          calendarId: this.form.calendarId,
-          eventName: this.form.eventName,
-          eventDescription: this.form.eventDescription,
-          eventColor: this.form.eventColor,
-          isRecurring: this.form.isRecurring,
-          dateTimeStarted: `${newStartDate}T${newStartTime}`,
-          dateTimeEnded: `${newEndDate}T${newEndTime}`,
+            if (this.selectedDays.includes(startDay)) {
+              let newStartTime = startTime.toISOString().substr(11, 19)
+              let newEndTime = endTime.toISOString().substr(11, 19)
+
+              calendarEvents.push({
+                calendarId: this.form.calendarId,
+                eventName: this.form.eventName,
+                eventDescription: this.form.eventDescription,
+                eventColor: this.form.eventColor,
+                isRecurring: this.form.isRecurring,
+                dateTimeStarted: `${newStartDate.toISOString().substr(0, 10)}T${newStartTime}`,
+                dateTimeEnded: `${newStartDate.toISOString().substr(0, 10)}T${newEndTime}`,
+                calendarEventGroupId: calendarEventGroupId,
+              })
+            }
+            startDate.setDate(startDate.getDate() + 1)
+          }
+        }
+        // RECURRING
+        if (this.form.isRecurring == true) {
+          let newStartTime = startTime.toISOString().substr(11, 19)
+          let newEndTime = endTime.toISOString().substr(11, 19)
+
+          while (startDate <= endDate) {
+            let newStartDate = startDate.toISOString().substr(0, 10)
+
+            calendarEvents.push({
+              calendarId: this.form.calendarId,
+              eventName: this.form.eventName,
+              eventDescription: this.form.eventDescription,
+              eventColor: this.form.eventColor,
+              isRecurring: this.form.isRecurring,
+              dateTimeStarted: `${newStartDate}T${newStartTime}`,
+              dateTimeEnded: `${newStartDate}T${newEndTime}`,
+              calendarEventGroupId: calendarEventGroupId,
+            })
+            startDate.setDate(startDate.getDate() + 1)
+          }
+        }
+        // NON-RECURRING
+        if (this.form.isRecurring == false) {
+          let newStartDate = startDate.toISOString().substr(0, 10)
+          let newEndDate = endDate.toISOString().substr(0, 10)
+          let newStartTime = startTime.toISOString().substr(11, 19)
+          let newEndTime = endTime.toISOString().substr(11, 19)
+
+          calendarEvents.push({
+            calendarId: this.form.calendarId,
+            eventName: this.form.eventName,
+            eventDescription: this.form.eventDescription,
+            eventColor: this.form.eventColor,
+            isRecurring: this.form.isRecurring,
+            dateTimeStarted: `${newStartDate}T${newStartTime}`,
+            dateTimeEnded: `${newEndDate}T${newEndTime}`,
+            calendarEventGroupId: null,
+          })
         }
 
         axios
-          .post(`${api}/CalendarEvent/NonRecurring`, payload)
+          .put(
+            `${api}/CalendarEvent?calendarEventId=${this.calendarEventId}&calendarEventGroupId=${this.calendarEventGroupId}&actionStatus=${this.actionStatus}`,
+            calendarEvents,
+          )
           .then(() => {
-            ElMessage.success('Event added successfully')
+            ElMessage.success('Event updated successfully')
             this.clear()
             this.$emit('refresh')
           })
           .catch((error) => {
             ElMessage.error(error)
           })
-        return
       }
     },
   },
@@ -248,19 +423,31 @@ export default {
       this.dialog.calendarEventForm = val
     },
     handleDateRange(val) {
-      console.log(val)
+      var newStartTime = new Date(val.start)
+      var newEndTime = new Date(val.end)
+      newStartTime.setHours(newStartTime.getHours() - 8)
+      newEndTime.setHours(newEndTime.getHours() - 8)
       this.form.calendarId = val.calendarId
       this.form.dateRange = {
         start: val.start,
         end: val.end,
       }
-      this.form.startTime = `${val.start}T08:00:00`
-      this.form.endTime = `2024-06-24T16:00:00`
+      if (val.weekClicked == false && val.dayClicked == false) {
+        this.form.startTime = `${val.start}T08:00:00`
+        this.form.endTime = `2024-06-24T16:00:00`
+      } else {
+        this.form.startTime = newStartTime
+        this.form.endTime = newEndTime
+      }
+
+      this.isDatePickerClicked = false
+      this.isDayAdded = false
     },
     calendars(val) {
       this.calendarList = val
     },
     calendarEvent(val) {
+      this.actionStatus = val.status
       this.calendarEventId = val.calendarEventId
       this.calendarEventGroupId = val.calendarEventGroupId
       this.form.calendarId = val.calendarId
@@ -272,9 +459,16 @@ export default {
         start: val.dateTimeStarted,
         end: val.dateTimeEnded,
       }
-
-      this.form.startTime = val.dateTimeStarted // Extract "HH:mm"
-      this.form.endTime = val.dateTimeEnded // Extract "HH:mm"
+      this.form.startTime = val.dateTimeStarted
+      this.form.endTime = val.dateTimeEnded
+    },
+    selectedDayList(val) {
+      for (let i = 0; i < val.length; i++) {
+        this.selectedDay(val[i])
+      }
+      this.days.forEach((day) => {
+        day.checked = val.includes(day.value)
+      })
     },
   },
 }

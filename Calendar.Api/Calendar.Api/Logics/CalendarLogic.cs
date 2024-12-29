@@ -12,7 +12,7 @@ namespace Calendar.Api.Logics
             _context = context;
         }
 
-        public async Task<List<CalendarDTO_GET>> GetCalendarByUserId(Guid userId)
+        public async Task<List<CalendarDTO_GET>> GetCalendarByUserId(Guid userId, string? search = "")
         {
             var data = await (from c in _context.Calendars
                               where c.UserId == userId && c.IsDeleted == false
@@ -23,6 +23,11 @@ namespace Calendar.Api.Logics
                                   CalendarName = c.Name,
                                   DateTimeCreated = c.DateTimeCreated
                               }).ToListAsync();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                data = data.Where(x => x.CalendarName.Contains(search)).ToList();
+                return data;
+            }
             return data;
         }
 

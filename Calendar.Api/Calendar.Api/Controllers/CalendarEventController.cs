@@ -55,12 +55,12 @@ namespace Calendar.Api.Controllers
             }
         }
 
-        [HttpPost("NonRecurring")]
-        public async Task<IActionResult> AddNonRecurringCalendarEvent(CalendarEventDTO_POST dto)
+        [HttpPost]
+        public async Task<IActionResult> AddCalendarEvent(List<CalendarEventDTO_POST> dto)
         {
             try
             {
-                bool ok = await _logic.AddNonRecurringCalendarEvent(dto);
+                bool ok = await _logic.AddCalendarEvent(dto);
                 if (ok)
                 {
                     return Ok();
@@ -73,25 +73,7 @@ namespace Calendar.Api.Controllers
             }
         }
 
-        [HttpPost("Recurring")]
-        public async Task<IActionResult> AddRecurringCalendarEvent(List<CalendarEventDTO_POST> dto)
-        {
-            try
-            {
-                bool ok = await _logic.AddRecurringCalendarEvent(dto);
-                if (ok)
-                {
-                    return Ok();
-                }
-                return BadRequest("Failed to add calendar event");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message + ex.StackTrace);
-            }
-        }
-
-        [HttpPut("{calendarEventId}/MoveResize")]
+        [HttpPut("{calendarEventId}")]
         public async Task<IActionResult> MoveResizeEvent(Guid calendarEventId, CalendarEventDTO_MOVE dto)
         {
             try
@@ -108,6 +90,25 @@ namespace Calendar.Api.Controllers
                 return BadRequest(ex.Message + ex.StackTrace);
             }
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateCalendarEvent([FromQuery]Guid calendarEventId, [FromQuery] Guid calendarEventGroupId, [FromQuery] string actionStatus, List<CalendarEventDTO_POST> dto)
+        {
+            try
+            {
+                bool ok = await _logic.UpdateCalendarEvent(calendarEventId, calendarEventGroupId, actionStatus,  dto);
+                if (ok)
+                {
+                    return Ok();
+                }
+                return BadRequest("Failed to update calendar event");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message + ex.StackTrace);
+            }
+        }
+       
 
         [HttpDelete("{calendarEventId}")]
         public async Task<IActionResult> DeleteCalendarEventByCalendarEventId(Guid calendarEventId)

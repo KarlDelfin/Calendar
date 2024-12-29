@@ -92,7 +92,7 @@
         }
       }
     },
-    "/api/Calendar/{userId}": {
+    "/api/Calendar/User/{userId}": {
       "get": {
         "tags": [
           "Calendar"
@@ -123,6 +123,14 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
             }
           }
         ],
@@ -288,6 +296,46 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "CalendarEvent"
+        ],
+        "parameters": [
+          {
+            "name": "calendarEventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "CalendarEvent"
@@ -354,38 +402,7 @@
         }
       }
     },
-    "/api/CalendarEvent/NonRecurring": {
-      "post": {
-        "tags": [
-          "CalendarEvent"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_POST"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_POST"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_POST"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/CalendarEvent/Recurring": {
+    "/api/CalendarEvent": {
       "post": {
         "tags": [
           "CalendarEvent"
@@ -423,9 +440,7 @@
             "description": "Success"
           }
         }
-      }
-    },
-    "/api/CalendarEvent/{calendarEventId}/MoveResize": {
+      },
       "put": {
         "tags": [
           "CalendarEvent"
@@ -433,11 +448,25 @@
         "parameters": [
           {
             "name": "calendarEventId",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "calendarEventGroupId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "actionStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -445,17 +474,26 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CalendarEventDTO_POST"
+                }
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CalendarEventDTO_POST"
+                }
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CalendarEventDTO_POST"
+                }
               }
             }
           }
@@ -551,6 +589,11 @@
           "dateTimeEnded": {
             "type": "string",
             "format": "date-time"
+          },
+          "calendarEventGroupId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -65,7 +65,7 @@ export default {
           })
         return
       }
-      if (this.title == 'Update Calendar') {
+      if (this.title == 'Edit Calendar') {
         const payload = {
           calendarName: this.form.calendarName,
         }

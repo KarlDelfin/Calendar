@@ -21,7 +21,8 @@
         public string EventColor { get; set; }
         public bool IsRecurring { get; set; }
         public DateTime DateTimeStarted { get; set; }
-        public DateTime DateTimeEnded { get; set; }   
+        public DateTime DateTimeEnded { get; set; }
+        public Guid? CalendarEventGroupId { get; set; }
     }
 
     public class CalendarEventDTO_MOVE

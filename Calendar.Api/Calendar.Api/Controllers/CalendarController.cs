@@ -14,12 +14,12 @@ namespace Calendar.Api.Controllers
             _logic = logic;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetCalendarByUserId(Guid userId, [FromQuery] PaginationRequest paginationRequest)
+        [HttpGet("User/{userId}")]
+        public async Task<IActionResult> GetCalendarByUserId(Guid userId, [FromQuery] PaginationRequest paginationRequest, [FromQuery] string? search = "")
         {
             try
             {
-                var data = await _logic.GetCalendarByUserId(userId);
+                var data = await _logic.GetCalendarByUserId(userId, search);
                 var pagination = PaginationLogic.PaginateData(data, paginationRequest);
                 return Ok(pagination);
             }

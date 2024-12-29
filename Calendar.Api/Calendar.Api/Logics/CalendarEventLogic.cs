@@ -32,7 +32,7 @@ namespace Calendar.Api.Logics
                                   EventColor = ce.Color,
                                   IsRecurring = ce.IsRecurring,
                                   DateTimeStarted = ce.DateTimeStarted,
-                                  DateTimeEnded = ce.DateTimeEnded,
+                                  DateTimeEnded = ce.CalendarEventGroupId == null ? ce.DateTimeEnded.AddDays(1) : ce.DateTimeEnded,
                                   CalendarEventGroupId = ce.CalendarEventGroupId
                               }).ToListAsync();
             return data;
@@ -82,29 +82,7 @@ namespace Calendar.Api.Logics
             return data;
         }
 
-        public async Task<bool> AddNonRecurringCalendarEvent(CalendarEventDTO_POST dto)
-        {
-            int success = 0;
-
-            var data = new CalendarEvent();
-
-            data.CalendarEventId = Guid.NewGuid();
-            data.CalendarId = dto.CalendarId;
-            data.Name = dto.EventName;
-            data.Description = dto.EventDescription;
-            data.Color = dto.EventColor;
-            data.IsRecurring = false;
-            data.DateTimeStarted = dto.DateTimeStarted;
-            data.DateTimeEnded = dto.DateTimeEnded;
-            data.CalendarEventGroupId = null;
-
-            _context.CalendarEvents.Add(data);
-            success = await _context.SaveChangesAsync();
-
-            return success > 0;
-        }
-
-        public async Task<bool> AddRecurringCalendarEvent(List<CalendarEventDTO_POST> dto)
+        public async Task<bool> AddCalendarEvent(List<CalendarEventDTO_POST> dto)
         {
             int success = 0;
             Guid calendarEventGroupId = Guid.NewGuid();
@@ -116,10 +94,10 @@ namespace Calendar.Api.Logics
                 Name = x.EventName,
                 Description = x.EventDescription,
                 Color = x.EventColor,
-                IsRecurring = true,
+                IsRecurring = x.IsRecurring,
                 DateTimeStarted = x.DateTimeStarted,
                 DateTimeEnded = x.DateTimeEnded,
-                CalendarEventGroupId = calendarEventGroupId
+                CalendarEventGroupId = x.CalendarEventGroupId
             });
 
             _context.CalendarEvents.AddRange(data);
@@ -162,7 +140,38 @@ namespace Calendar.Api.Logics
             success = await _context.SaveChangesAsync();
 
             return success > 0;
+        }
 
+        public async Task<bool> UpdateCalendarEvent(Guid calendarEventId, Guid calendarEventGroupId, string actionStatus,  List<CalendarEventDTO_POST> dto)
+        {
+            if (calendarEventGroupId == Guid.Empty || actionStatus == "Just this one")
+            {
+                var data = await _context.CalendarEvents.FirstOrDefaultAsync(x => x.CalendarEventId == calendarEventId);
+
+                _context.CalendarEvents.Remove(data);
+                await _context.SaveChangesAsync();
+
+                bool isSuccess = await AddCalendarEvent(dto);
+                if (isSuccess)
+                {
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                var data = await _context.CalendarEvents.Where(x => x.CalendarEventGroupId == calendarEventGroupId).ToListAsync();
+
+                _context.CalendarEvents.RemoveRange(data);
+                await _context.SaveChangesAsync();
+
+                bool isSuccess = await AddCalendarEvent(dto);
+                if (isSuccess)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }

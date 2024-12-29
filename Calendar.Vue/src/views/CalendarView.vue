@@ -21,7 +21,7 @@
             <el-table-column label="Calendar Name" prop="calendarName" />
             <el-table-column label="Operation">
               <template #default="scope">
-                <el-button size="small" @click="openForm('Update Calendar', scope.row)"
+                <el-button size="small" @click="openForm('Edit Calendar', scope.row)"
                   >Edit</el-button
                 >
                 <el-button size="small" type="danger" @click="deleteCalendar(scope.row.calendarId)"
@@ -56,13 +56,7 @@
 </template>
 <script>
 import axios from 'axios'
-import {
-  ElMessage,
-  ElMessageBox,
-  ElLoading,
-
-  //9//
-} from 'element-plus'
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import CalendarForm from '../components/CalendarForm.vue'
 const api = import.meta.env.VITE_APP_API_URL
 export default {
@@ -90,7 +84,7 @@ export default {
       this.title = title
       this.dialog.calendarForm = true
 
-      if (title == 'Update Calendar') {
+      if (title == 'Edit Calendar') {
         this.calendarData = data
       }
     },
@@ -124,7 +118,7 @@ export default {
       })
       axios
         .get(
-          `${api}/Calendar/${this.user.userId}?currentPage=${this.calendarPagination.currentPage}&elementsPerPage=${this.calendarPagination.elementsPerPage}`,
+          `${api}/Calendar/User/${this.user.userId}?currentPage=${this.calendarPagination.currentPage}&elementsPerPage=${this.calendarPagination.elementsPerPage}`,
         )
         .then((response) => {
           this.calendars = response.data.results
