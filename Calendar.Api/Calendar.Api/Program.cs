@@ -1,6 +1,6 @@
 using Calendar.Api.DatabaseConnection;
 using Calendar.Api.Logics;
-using Cultivatrade.Api.Services;
+using Calendar.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Calendar.Api
@@ -18,7 +18,7 @@ namespace Calendar.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<CalendarContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddScoped<AssignmentLogic>();
+            builder.Services.AddScoped<UserAssignmentLogic>();
             builder.Services.AddScoped<CalendarLogic>();
             builder.Services.AddScoped<CalendarEventLogic>();
             builder.Services.AddScoped<Base64Resizer>();

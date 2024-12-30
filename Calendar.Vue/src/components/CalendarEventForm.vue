@@ -63,10 +63,16 @@
       </el-form-item>
       <div class="row">
         <el-form-item class="col-4 timePicker" label="Start Time">
-          <el-time-picker format="HH:mm" v-model="form.startTime" placeholder="Start Time" />
+          <el-time-picker
+            :disabled="dayClicked || weekClicked"
+            format="HH:mm"
+            v-model="form.startTime"
+            placeholder="Start Time"
+          />
         </el-form-item>
         <el-form-item class="col-4 timePicker" label="End Time">
           <el-time-picker
+            :disabled="dayClicked || weekClicked"
             format="HH:mm"
             v-model="form.endTime"
             placeholder="End Time"
@@ -130,6 +136,8 @@ export default {
   },
   data() {
     return {
+      dayClicked: false,
+      weekClicked: false,
       actionStatus: '',
       calendarEventId: '',
       calendarEventGroupId: '',
@@ -218,6 +226,8 @@ export default {
       this.selectedDays = []
       this.isDatePickerClicked = false
       this.isDayAdded = true
+      this.dayClicked = false
+      this.weekClicked = false
     },
     submitForm() {
       if (
@@ -423,6 +433,8 @@ export default {
       this.dialog.calendarEventForm = val
     },
     handleDateRange(val) {
+      this.dayClicked = val.dayClicked
+      this.weekClicked = val.weekClicked
       var newStartTime = new Date(val.start)
       var newEndTime = new Date(val.end)
       newStartTime.setHours(newStartTime.getHours() - 8)

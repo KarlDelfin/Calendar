@@ -25,7 +25,7 @@
         public Guid? CalendarEventGroupId { get; set; }
     }
 
-    public class CalendarEventDTO_MOVE
+    public class CalendarEventDTO_PUT
     {
         public DateTime DateTimeStarted { get; set; }
         public DateTime DateTimeEnded { get; set; }

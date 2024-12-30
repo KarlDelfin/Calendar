@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace FileUpload.Api.Logics
+﻿namespace Calendar.Api.Services
 {
     public class CheckFileType
     {

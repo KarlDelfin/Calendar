@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
-namespace Cultivatrade.Api.Services
+namespace Calendar.Api.Services
 {
     public class Base64Resizer
     {

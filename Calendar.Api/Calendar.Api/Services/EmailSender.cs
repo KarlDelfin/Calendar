@@ -1,7 +1,7 @@
 ﻿using System.Net.Mail;
 using System.Net;
 
-namespace Cultivatrade.Api.Services
+namespace Calendar.Api.Services
 {
     public class EmailSender
     {

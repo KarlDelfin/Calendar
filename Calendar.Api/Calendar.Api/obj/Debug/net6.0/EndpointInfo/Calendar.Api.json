@@ -5,93 +5,6 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Assignment/Login": {
-      "post": {
-        "tags": [
-          "Assignment"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignmentDTO_LOGIN"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignmentDTO_LOGIN"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignmentDTO_LOGIN"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Assignment": {
-      "post": {
-        "tags": [
-          "Assignment"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "FirstName": {
-                    "type": "string"
-                  },
-                  "LastName": {
-                    "type": "string"
-                  },
-                  "Email": {
-                    "type": "string"
-                  },
-                  "Password": {
-                    "type": "string"
-                  },
-                  "Image": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              },
-              "encoding": {
-                "FirstName": {
-                  "style": "form"
-                },
-                "LastName": {
-                  "style": "form"
-                },
-                "Email": {
-                  "style": "form"
-                },
-                "Password": {
-                  "style": "form"
-                },
-                "Image": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
     "/api/Calendar/User/{userId}": {
       "get": {
         "tags": [
@@ -315,17 +228,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+                "$ref": "#/components/schemas/CalendarEventDTO_PUT"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+                "$ref": "#/components/schemas/CalendarEventDTO_PUT"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CalendarEventDTO_MOVE"
+                "$ref": "#/components/schemas/CalendarEventDTO_PUT"
               }
             }
           }
@@ -504,24 +417,97 @@
           }
         }
       }
+    },
+    "/api/UserAssignment/Login": {
+      "post": {
+        "tags": [
+          "UserAssignment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAssignmentDTO_LOGIN"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAssignmentDTO_LOGIN"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAssignmentDTO_LOGIN"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/UserAssignment": {
+      "post": {
+        "tags": [
+          "UserAssignment"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "FirstName": {
+                    "type": "string"
+                  },
+                  "LastName": {
+                    "type": "string"
+                  },
+                  "Email": {
+                    "type": "string"
+                  },
+                  "Password": {
+                    "type": "string"
+                  },
+                  "Image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "FirstName": {
+                  "style": "form"
+                },
+                "LastName": {
+                  "style": "form"
+                },
+                "Email": {
+                  "style": "form"
+                },
+                "Password": {
+                  "style": "form"
+                },
+                "Image": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "AssignmentDTO_LOGIN": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CalendarDTO_POST": {
         "type": "object",
         "properties": {
@@ -542,20 +528,6 @@
           "calendarName": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CalendarEventDTO_MOVE": {
-        "type": "object",
-        "properties": {
-          "dateTimeStarted": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "dateTimeEnded": {
-            "type": "string",
-            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -593,6 +565,34 @@
           "calendarEventGroupId": {
             "type": "string",
             "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CalendarEventDTO_PUT": {
+        "type": "object",
+        "properties": {
+          "dateTimeStarted": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateTimeEnded": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserAssignmentDTO_LOGIN": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
             "nullable": true
           }
         },

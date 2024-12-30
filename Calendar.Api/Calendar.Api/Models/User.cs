@@ -11,8 +11,8 @@ namespace Calendar.Api.Models
     {
         public User()
         {
-            Assignments = new HashSet<Assignment>();
             Calendars = new HashSet<Calendar>();
+            UserAssignments = new HashSet<UserAssignment>();
         }
 
         [Key]
@@ -27,8 +27,8 @@ namespace Calendar.Api.Models
         public string Image { get; set; } = null!;
 
         [InverseProperty("User")]
-        public virtual ICollection<Assignment> Assignments { get; set; }
-        [InverseProperty("User")]
         public virtual ICollection<Calendar> Calendars { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<UserAssignment> UserAssignments { get; set; }
     }
 }

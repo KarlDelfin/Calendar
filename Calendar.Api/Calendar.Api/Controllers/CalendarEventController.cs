@@ -74,7 +74,7 @@ namespace Calendar.Api.Controllers
         }
 
         [HttpPut("{calendarEventId}")]
-        public async Task<IActionResult> MoveResizeEvent(Guid calendarEventId, CalendarEventDTO_MOVE dto)
+        public async Task<IActionResult> MoveResizeEvent(Guid calendarEventId, CalendarEventDTO_PUT dto)
         {
             try
             {

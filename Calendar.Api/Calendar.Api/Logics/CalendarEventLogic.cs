@@ -106,7 +106,7 @@ namespace Calendar.Api.Logics
             return success > 0;
         }
 
-        public async Task<bool> MoveResizeEvent(Guid calendarEventId, CalendarEventDTO_MOVE dto)
+        public async Task<bool> MoveResizeEvent(Guid calendarEventId, CalendarEventDTO_PUT dto)
         {
             int success = 0;
             var data = await _context.CalendarEvents.FirstOrDefaultAsync(x => x.CalendarEventId == calendarEventId);

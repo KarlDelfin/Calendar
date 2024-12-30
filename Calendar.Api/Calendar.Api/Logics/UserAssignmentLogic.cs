@@ -1,7 +1,7 @@
 ﻿using Calendar.Api.DatabaseConnection;
 using Calendar.Api.DTO;
 using Calendar.Api.Models;
-using Cultivatrade.Api.Services;
+using Calendar.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using BC = BCrypt.Net.BCrypt;
 using SixLabors.ImageSharp;
@@ -9,30 +9,30 @@ using SixLabors.ImageSharp.Processing;
 using ImageSharpImage = SixLabors.ImageSharp.Image;
 namespace Calendar.Api.Logics
 {
-    public class AssignmentLogic
+    public class UserAssignmentLogic
     {
         private readonly CalendarContext _context;
         private readonly FilePath _filePath;
         private readonly Base64Resizer _base64Resizer;
-        public AssignmentLogic(CalendarContext context, FilePath filePath, Base64Resizer base64Resizer)
+        public UserAssignmentLogic(CalendarContext context, FilePath filePath, Base64Resizer base64Resizer)
         {
             _context = context;
             _filePath = filePath;
             _base64Resizer = base64Resizer;
         }
 
-        public async Task<AssignmentDTO_GET> LoginUser(AssignmentDTO_LOGIN dto)
+        public async Task<UserAssignmentDTO_GET> LoginUser(UserAssignmentDTO_LOGIN dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x=>x.Email == dto.Email);
             if (user != null && BC.Verify(dto.Password, user.Password))
             {
-                var data = await (from a in _context.Assignments
+                var data = await (from a in _context.UserAssignments
                                   join u in _context.Users on a.UserId equals u.UserId
                                   join r in _context.Roles on a.RoleId equals r.RoleId
                                   where a.IsDisabled == false
-                                  select new AssignmentDTO_GET
+                                  select new UserAssignmentDTO_GET
                                   {
-                                      AssignmentId = a.AssignmentId,
+                                      UserAssignmentId = a.UserAssignmentId,
                                       UserId = a.UserId,
                                       RoleId = a.RoleId,
                                       RoleName = r.Name,
@@ -47,11 +47,11 @@ namespace Calendar.Api.Logics
             return null;
         }
 
-        public async Task<string> RegisterUser(AssignmentDTO_POST dto)
+        public async Task<string> RegisterUser(UserAssignmentDTO_POST dto)
         {
             int success = 0;
             Guid userId = Guid.NewGuid();
-            Guid assignmentId = Guid.NewGuid();
+            Guid userAssignmentId = Guid.NewGuid();
             string imageName = "";
 
             var checkUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == dto.Email);
@@ -86,13 +86,13 @@ namespace Calendar.Api.Logics
 
             if(success > 0)
             {
-                var assignment = new Assignment();
-                assignment.AssignmentId = assignmentId;
-                assignment.UserId = userId;
-                assignment.RoleId = new Guid("575f0e52-7ae1-4b3c-8d60-172b841682f6"); // Regular User ID
-                assignment.DateTimeCreated = DateTime.Now;
+                var userAssignment = new UserAssignment();
+                userAssignment.UserAssignmentId = userAssignmentId;
+                userAssignment.UserId = userId;
+                userAssignment.RoleId = new Guid("575f0e52-7ae1-4b3c-8d60-172b841682f6"); // Regular User ID
+                userAssignment.DateTimeCreated = DateTime.Now;
 
-                _context.Assignments.Add(assignment);
+                _context.UserAssignments.Add(userAssignment);
                 await _context.SaveChangesAsync();
 
                 return "success";

@@ -5,16 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace Calendar.Api.Controllers
 {
     [ApiController, Route("api/[controller]")]
-    public class AssignmentController : Controller
+    public class UserAssignmentController : Controller
     {
-        private readonly AssignmentLogic _logic;
-        public AssignmentController(AssignmentLogic logic)
+        private readonly UserAssignmentLogic _logic;
+        public UserAssignmentController(UserAssignmentLogic logic)
         {
             _logic = logic;
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> LoginUser(AssignmentDTO_LOGIN dto)
+        public async Task<IActionResult> LoginUser(UserAssignmentDTO_LOGIN dto)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace Calendar.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterUser([FromForm] AssignmentDTO_POST dto)
+        public async Task<IActionResult> RegisterUser([FromForm] UserAssignmentDTO_POST dto)
         {
             try
             {

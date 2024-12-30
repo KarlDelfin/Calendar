@@ -918,8 +918,9 @@ export default {
   mounted() {
     this.calendarApi = this.$refs.refCalendar.getApi()
     this.user = JSON.parse(localStorage.getItem('user'))
+    console.log(this.user)
     if (this.user == null) {
-      this.$router.push('/')
+      window.location.replace('/')
     }
     this.getCalendarByUserId()
     this.getCalendarEvent()

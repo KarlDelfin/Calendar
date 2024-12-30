@@ -11,7 +11,7 @@ namespace Calendar.Api.Models
     {
         public Role()
         {
-            Assignments = new HashSet<Assignment>();
+            UserAssignments = new HashSet<UserAssignment>();
         }
 
         [Key]
@@ -21,6 +21,6 @@ namespace Calendar.Api.Models
         public int RoleLevel { get; set; }
 
         [InverseProperty("Role")]
-        public virtual ICollection<Assignment> Assignments { get; set; }
+        public virtual ICollection<UserAssignment> UserAssignments { get; set; }
     }
 }

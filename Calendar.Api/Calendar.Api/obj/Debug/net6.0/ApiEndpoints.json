@@ -1,57 +1,5 @@
 [
   {
-    "ContainingType": "Calendar.Api.Controllers.AssignmentController",
-    "Method": "RegisterUser",
-    "RelativePath": "api/Assignment",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "FirstName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "LastName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Email",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Password",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Image",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Calendar.Api.Controllers.AssignmentController",
-    "Method": "LoginUser",
-    "RelativePath": "api/Assignment/Login",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "Calendar.Api.DTO.AssignmentDTO_LOGIN",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "Calendar.Api.Controllers.CalendarController",
     "Method": "AddCalendar",
     "RelativePath": "api/Calendar",
@@ -245,7 +193,7 @@
       },
       {
         "Name": "dto",
-        "Type": "Calendar.Api.DTO.CalendarEventDTO_MOVE",
+        "Type": "Calendar.Api.DTO.CalendarEventDTO_PUT",
         "IsRequired": true
       }
     ],
@@ -289,6 +237,58 @@
         "Name": "dateTimeEnded",
         "Type": "System.DateTime",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Calendar.Api.Controllers.UserAssignmentController",
+    "Method": "RegisterUser",
+    "RelativePath": "api/UserAssignment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "FirstName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LastName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Calendar.Api.Controllers.UserAssignmentController",
+    "Method": "LoginUser",
+    "RelativePath": "api/UserAssignment/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Calendar.Api.DTO.UserAssignmentDTO_LOGIN",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

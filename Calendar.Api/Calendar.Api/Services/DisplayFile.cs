@@ -1,4 +1,4 @@
-﻿namespace FileUpload.Api.Logics
+﻿namespace Calendar.Api.Services
 {
     public class DisplayFile
     {

@@ -17,11 +17,11 @@ namespace Calendar.Api.DatabaseConnection
         {
         }
 
-        public virtual DbSet<Assignment> Assignments { get; set; } = null!;
         public virtual DbSet<Calendar.Api.Models.Calendar> Calendars { get; set; } = null!;
         public virtual DbSet<CalendarEvent> CalendarEvents { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<UserAssignment> UserAssignments { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,23 +34,6 @@ namespace Calendar.Api.DatabaseConnection
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Assignment>(entity =>
-            {
-                entity.Property(e => e.AssignmentId).ValueGeneratedNever();
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.Assignments)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Assignment_Role");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Assignments)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Assignment_User");
-            });
-
             modelBuilder.Entity<Calendar.Api.Models.Calendar>(entity =>
             {
                 entity.Property(e => e.CalendarId).ValueGeneratedNever();
@@ -81,6 +64,23 @@ namespace Calendar.Api.DatabaseConnection
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.UserId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<UserAssignment>(entity =>
+            {
+                entity.Property(e => e.UserAssignmentId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.UserAssignments)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Assignment_Role");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserAssignments)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Assignment_User");
             });
 
             OnModelCreatingPartial(modelBuilder);

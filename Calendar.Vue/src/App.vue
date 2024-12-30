@@ -3,7 +3,7 @@
     <el-menu class="el-menu-demo d-flex justify-content-end" mode="horizontal">
       <el-sub-menu index="2">
         <template #title>Profile</template>
-        <el-menu-item index="2-1" @click="logout">Logout</el-menu-item>
+        <el-menu-item @click="logout"><i class="bi bi-power me-1"></i> Logout</el-menu-item>
       </el-sub-menu>
     </el-menu></el-header
   >
