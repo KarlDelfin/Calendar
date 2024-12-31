@@ -55,5 +55,23 @@ namespace Calendar.Api.Controllers
                 return BadRequest(ex.Message + ex.StackTrace);
             }
         }
+
+        [HttpPut("User/{userId}")]
+        public async Task<IActionResult> UpdateUser(Guid userId, [FromForm] UserAssignmentDTO_POST dto)
+        {
+            try
+            {
+                bool ok = await _logic.UpdateUser(userId, dto);
+                if (ok)
+                {
+                    return Ok();
+                }
+                return BadRequest("Failed to register account");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message + ex.StackTrace);
+            }
+        }
     }
 }

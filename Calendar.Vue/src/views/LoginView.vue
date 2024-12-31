@@ -50,7 +50,7 @@ export default {
         password: this.form.password,
       }
       axios
-        .post(`${api}/Assignment/Login`, payload)
+        .post(`${api}/UserAssignment/Login`, payload)
         .then((response) => {
           if (response == null) {
             ElMessage.error('Invalid Email or Password')

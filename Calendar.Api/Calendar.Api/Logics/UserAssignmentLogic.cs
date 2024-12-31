@@ -7,6 +7,8 @@ using BC = BCrypt.Net.BCrypt;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using ImageSharpImage = SixLabors.ImageSharp.Image;
+using System.Drawing.Imaging;
+using System.Drawing;
 namespace Calendar.Api.Logics
 {
     public class UserAssignmentLogic
@@ -98,6 +100,56 @@ namespace Calendar.Api.Logics
                 return "success";
             }
             return "error";
+        }
+
+        public async Task<bool> UpdateUser(Guid userId, UserAssignmentDTO_POST dto)
+        {
+
+            int success = 0;
+            string profileName = "";
+
+            var data = _context.Users.FirstOrDefault(x => x.UserId == userId);
+
+            // UPDATE IMAGE LOGIC
+            if (dto.Image != null && dto.Image.Length > 0)
+            {
+                if (File.Exists(_filePath.UserImagePath(data.Image)))
+                {
+                    File.Delete(_filePath.UserImagePath(data.Image));
+                }
+
+                profileName = userId.ToString() + Path.GetExtension(dto.Image.FileName);
+                data.Image = profileName;
+                var profilePath = _filePath.UserImagePath("");
+                string profileFilePath = Path.Combine(profilePath, profileName);
+
+                using (var image = System.Drawing.Image.FromStream(dto.Image.OpenReadStream()))
+                using (var resizedImage = new Bitmap(200, 200))
+                using (var graphics = Graphics.FromImage(resizedImage))
+                {
+                    graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    graphics.DrawImage(image, 0, 0, 200, 200);
+                    resizedImage.Save(profileFilePath, ImageFormat.Png);
+                }
+            }
+
+            // PASSWORD
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                data.Password = BC.HashPassword(dto.Password, BC.GenerateSalt());
+            }
+
+            data.FirstName = dto.FirstName;
+            data.LastName = dto.LastName;
+
+            _context.Users.Update(data);
+            success = _context.SaveChanges();
+
+            if (success > 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
