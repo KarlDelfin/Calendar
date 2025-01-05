@@ -32,7 +32,7 @@ namespace Calendar.Api.Logics
                                   EventColor = ce.Color,
                                   IsRecurring = ce.IsRecurring,
                                   DateTimeStarted = ce.DateTimeStarted,
-                                  DateTimeEnded = ce.CalendarEventGroupId == null ? ce.DateTimeEnded.AddDays(1) : ce.DateTimeEnded,
+                                  DateTimeEnded = ce.DateTimeEnded,
                                   CalendarEventGroupId = ce.CalendarEventGroupId
                               }).ToListAsync();
             return data;

@@ -3,32 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|c:\\users\\admin\\desktop\\calendar\\calendar.api\\calendar.api\\dto\\userassignmentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|solutionrelative:calendar.api\\dto\\userassignmentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|c:\\users\\admin\\desktop\\calendar\\calendar.api\\calendar.api\\logics\\userassignmentlogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|solutionrelative:calendar.api\\logics\\userassignmentlogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|c:\\users\\admin\\desktop\\calendar\\calendar.api\\calendar.api\\controllers\\userassignmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|solutionrelative:calendar.api\\controllers\\userassignmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|c:\\users\\admin\\desktop\\calendar\\calendar.api\\calendar.api\\logics\\calendareventlogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|solutionrelative:calendar.api\\logics\\calendareventlogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|c:\\users\\admin\\desktop\\calendar\\calendar.api\\calendar.api\\controllers\\calendareventcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|solutionrelative:calendar.api\\controllers\\calendareventcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|c:\\users\\admin\\desktop\\calendar\\calendar.api\\calendar.api\\dto\\calendareventdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|solutionrelative:calendar.api\\dto\\calendareventdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|c:\\users\\admin\\desktop\\calendar\\calendar.api\\calendar.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF06B017-6B40-4756-A450-44AF508FE085}|Calendar.Api\\Calendar.Api.csproj|solutionrelative:calendar.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -43,89 +19,15 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "UserAssignmentDTO.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\DTO\\UserAssignmentDTO.cs",
-              "RelativeDocumentMoniker": "Calendar.Api\\DTO\\UserAssignmentDTO.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\DTO\\UserAssignmentDTO.cs",
-              "RelativeToolTip": "Calendar.Api\\DTO\\UserAssignmentDTO.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAD4vxkAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T05:19:00.513Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UserAssignmentLogic.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Logics\\UserAssignmentLogic.cs",
-              "RelativeDocumentMoniker": "Calendar.Api\\Logics\\UserAssignmentLogic.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Logics\\UserAssignmentLogic.cs",
-              "RelativeToolTip": "Calendar.Api\\Logics\\UserAssignmentLogic.cs",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAiwGgAAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T05:18:40.396Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "UserAssignmentController.cs",
               "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Controllers\\UserAssignmentController.cs",
               "RelativeDocumentMoniker": "Calendar.Api\\Controllers\\UserAssignmentController.cs",
               "ToolTip": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Controllers\\UserAssignmentController.cs",
               "RelativeToolTip": "Calendar.Api\\Controllers\\UserAssignmentController.cs",
-              "ViewState": "AgIAACwAAAAAAAAAAAAmwEoAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAgwDoAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T05:05:48.527Z",
+              "WhenOpened": "2024-12-30T05:19:30.325Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "CalendarEventLogic.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Logics\\CalendarEventLogic.cs",
-              "RelativeDocumentMoniker": "Calendar.Api\\Logics\\CalendarEventLogic.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Logics\\CalendarEventLogic.cs",
-              "RelativeToolTip": "Calendar.Api\\Logics\\CalendarEventLogic.cs",
-              "ViewState": "AgIAAHoAAAAAAAAAAAAwwGwAAABaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T05:05:08.157Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CalendarEventController.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Controllers\\CalendarEventController.cs",
-              "RelativeDocumentMoniker": "Calendar.Api\\Controllers\\CalendarEventController.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Controllers\\CalendarEventController.cs",
-              "RelativeToolTip": "Calendar.Api\\Controllers\\CalendarEventController.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAowFAAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T05:05:02.935Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CalendarEventDTO.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\DTO\\CalendarEventDTO.cs",
-              "RelativeDocumentMoniker": "Calendar.Api\\DTO\\CalendarEventDTO.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\DTO\\CalendarEventDTO.cs",
-              "RelativeToolTip": "Calendar.Api\\DTO\\CalendarEventDTO.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAAiwBsAAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T05:04:52.278Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Program.cs",
-              "RelativeDocumentMoniker": "Calendar.Api\\Program.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Calendar\\Calendar.Api\\Calendar.Api\\Program.cs",
-              "RelativeToolTip": "Calendar.Api\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T05:03:11.816Z"
             }
           ]
         }

@@ -279,8 +279,24 @@
   },
   {
     "ContainingType": "Calendar.Api.Controllers.UserAssignmentController",
+    "Method": "LoginUser",
+    "RelativePath": "api/UserAssignment/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Calendar.Api.DTO.UserAssignmentDTO_LOGIN",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Calendar.Api.Controllers.UserAssignmentController",
     "Method": "UpdateUser",
-    "RelativePath": "api/UserAssignment/{userId}",
+    "RelativePath": "api/UserAssignment/User/{userId}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -314,22 +330,6 @@
         "Name": "Image",
         "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Calendar.Api.Controllers.UserAssignmentController",
-    "Method": "LoginUser",
-    "RelativePath": "api/UserAssignment/Login",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "Calendar.Api.DTO.UserAssignmentDTO_LOGIN",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []

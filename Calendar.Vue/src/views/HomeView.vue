@@ -1,154 +1,162 @@
 <template>
-  <el-container>
+  <el-card>
     <el-container>
-      <el-aside class="sideMenu">
-        <div class="d-flex justify-content-center p-2">
-          <el-button @click="this.$router.push('/calendar')">Manage Calendar</el-button>
-        </div>
-        <!-- VCALENDAR -->
-        <VCalendar
-          :key="pickerKey"
-          style="width: 100%"
-          v-model="today"
-          @dayclick="dayClick"
-          @did-move="didMove"
-          :attributes="attributes"
-        />
-        <!-- START CALENDAR -->
-        <div class="row p-2">
-          <div class="col-9">
-            <el-select v-model="form.calendarId" @change="getCalendarEvent" placeholder="Calendar">
-              <el-option
-                v-for="calendar in calendars"
-                :key="calendar.calendarId"
-                :label="calendar.calendarName"
-                :value="calendar.calendarId"
-              />
-            </el-select>
+      <el-container>
+        <el-aside class="sideMenu">
+          <div class="d-flex justify-content-center p-2">
+            <el-button @click="this.$router.push('/calendar')">Manage Calendar</el-button>
           </div>
-          <div class="col-1">
-            <el-button type="primary" circle @click="openForm('Create Calendar')">+</el-button>
-          </div>
-        </div>
-        <div class="d-flex justify-content-center">Events for {{ formatMonth(currentMonth) }}</div>
-        <!-- EVENTS -->
-        <div class="row checkEvents p-2 border">
-          <el-checkbox
-            v-model="selectedCalendarEvent[calendarEvent.calendarEventId]"
-            v-for="calendarEvent in calendarEvents"
-            :key="calendarEvent.calendarEventId"
-            :label="calendarEvent.eventName"
-            :value="calendarEvent.calendarEventId"
-            @change="handleCheckboxChange(calendarEvent.calendarEventId, calendarEvent.eventName)"
-            :checked="true"
+          <!-- VCALENDAR -->
+          <VCalendar
+            :key="pickerKey"
+            style="width: 100%"
+            v-model="today"
+            @dayclick="dayClick"
+            @did-move="didMove"
+            :attributes="attributes"
           />
-        </div>
-        <!-- SELECT ALL / SELECT NONE -->
-        <div class="row p-2">
-          <div class="col">
-            <el-button class="selectAllNone" size="small" @click="checkAllEvents"
-              >Select All</el-button
-            >
+          <!-- START CALENDAR -->
+          <div class="row p-2">
+            <div class="col-9">
+              <el-select
+                v-model="form.calendarId"
+                @change="getCalendarEvent"
+                placeholder="Calendar"
+              >
+                <el-option
+                  v-for="calendar in calendars"
+                  :key="calendar.calendarId"
+                  :label="calendar.calendarName"
+                  :value="calendar.calendarId"
+                />
+              </el-select>
+            </div>
+            <div class="col-1">
+              <el-button type="primary" circle @click="openForm('Create Calendar')">+</el-button>
+            </div>
           </div>
-          <div class="col">
-            <el-button class="selectAllNone" size="small" @click="uncheckAllEvents"
-              >Select None</el-button
-            >
+          <div class="d-flex justify-content-center">
+            Events for {{ formatMonth(currentMonth) }}
           </div>
-        </div>
-      </el-aside>
-      <el-main class="main">
-        <div class="shadow" style="min-height: 80vh" v-if="isErrorFullCalendar">
-          <el-empty>
-            <el-button type="primary" @click="(getCalendarByUserId(), getCalendarEvent())"
-              >Refresh</el-button
-            >
-          </el-empty>
-        </div>
-        <div v-else>
-          <FullCalendar class="fullCalendar" ref="refCalendar" :options="calendarOptions" />
-        </div>
-      </el-main>
+          <!-- EVENTS -->
+          <div class="row checkEvents p-2 border">
+            <el-checkbox
+              v-model="selectedCalendarEvent[calendarEvent.calendarEventId]"
+              v-for="calendarEvent in calendarEvents"
+              :key="calendarEvent.calendarEventId"
+              :label="calendarEvent.eventName"
+              :value="calendarEvent.calendarEventId"
+              @change="handleCheckboxChange(calendarEvent.calendarEventId, calendarEvent.eventName)"
+              :checked="true"
+            />
+          </div>
+          <!-- SELECT ALL / SELECT NONE -->
+          <div class="row p-2">
+            <div class="col">
+              <el-button class="selectAllNone" size="small" @click="checkAllEvents"
+                >Select All</el-button
+              >
+            </div>
+            <div class="col">
+              <el-button class="selectAllNone" size="small" @click="uncheckAllEvents"
+                >Select None</el-button
+              >
+            </div>
+          </div>
+        </el-aside>
+        <el-main class="main">
+          <div class="shadow" style="min-height: 80vh" v-if="isErrorFullCalendar">
+            <el-empty>
+              <el-button type="primary" @click="(getCalendarByUserId(), getCalendarEvent())"
+                >Refresh</el-button
+              >
+            </el-empty>
+          </div>
+          <div v-else>
+            <FullCalendar class="fullCalendar" ref="refCalendar" :options="calendarOptions" />
+          </div>
+        </el-main>
+      </el-container>
     </el-container>
-  </el-container>
 
-  <!-- START RECURRING EVENT CONFIMATION DIALOG -->
-  <el-dialog
-    v-model="dialog.recurringEvent"
-    title="Open Recurring Event"
-    width="500"
-    center
-    :before-close="clear"
-  >
-    <div class="d-flex justify-content-center mt-3">
-      <span> This is one activity in a series. What do you want to open? </span>
-    </div>
-    <!-- START RADIO BUTTON -->
-    <div class="pt-3 d-flex justify-content-center text-center text-sm">
-      <el-radio-group v-model="form.isRecurring" class="ml-4">
-        <el-radio label="Just this one" :value="false" size="large" />
-        <el-radio label="The entire series" :value="true" size="large" />
-      </el-radio-group>
-    </div>
-    <!-- END RADIO BUTTON -->
-
-    <template #footer>
-      <div class="dialog-footer d-flex justify-content-end">
-        <el-button type="primary" @click="openForm('Open Recurring Calendar Event')">
-          Confirm
-        </el-button>
+    <!-- START RECURRING EVENT CONFIMATION DIALOG -->
+    <el-dialog
+      v-model="dialog.recurringEvent"
+      title="Open Recurring Event"
+      width="500"
+      center
+      :before-close="clear"
+    >
+      <div class="d-flex justify-content-center mt-3">
+        <span> This is one activity in a series. What do you want to open? </span>
       </div>
-    </template>
-  </el-dialog>
-  <!-- END RECURRING EVENT CONFIMATION DIALOG -->
-
-  <!-- START OPERATION -->
-  <el-dialog v-model="dialog.operation" title="Event Details" width="500" center>
-    <div class="border p-3" style="border-radius: 20px">
-      <label class="fw-bold">Event Name: </label>
-      {{ calendarEvent.eventName }}
-      <br />
-      <label class="fw-bold mt-3">Description: </label>
-      {{ calendarEvent.eventDescription }}
-      <br />
-      <label class="fw-bold mt-3">Date/Time Start: </label>
-      {{ formatDateTime(calendarEvent.dateTimeStarted) }}
-      <br />
-      <label class="fw-bold mt-3">Date/Time End: </label>
-      {{ formatDateTime(calendarEvent.dateTimeEnded) }}
-    </div>
-
-    <template #footer>
-      <div class="dialog-footer d-flex justify-content-end">
-        <el-button @click="openForm('Open Calendar Event')"> Edit </el-button>
-        <el-button type="danger" @click="deleteCalendarEvent()"> Delete </el-button>
+      <!-- START RADIO BUTTON -->
+      <div class="pt-3 d-flex justify-content-center text-center text-sm">
+        <el-radio-group v-model="form.isRecurring" class="ml-4">
+          <el-radio label="Just this one" :value="false" size="large" />
+          <el-radio label="The entire series" :value="true" size="large" />
+        </el-radio-group>
       </div>
-    </template>
-  </el-dialog>
-  <!-- END OPERATION -->
+      <!-- END RADIO BUTTON -->
 
-  <!-- START CALENDAR EVENT FORM -->
-  <CalendarEventForm
-    :calendarEvent="calendarEvent"
-    :calendars="calendars"
-    :title="title"
-    :openForm="dialog.calendarEventForm"
-    @close="dialog.calendarEventForm = false"
-    :handleDateRange="form.dateRange"
-    @refresh="(getCalendarEvent(), (dialog.operation = false))"
-    :selectedDayList="selectedDays"
-    :daysList="daysList"
-  />
-  <!-- END CALENDAR EVENT FORM -->
+      <template #footer>
+        <div class="dialog-footer d-flex justify-content-end">
+          <el-button type="primary" @click="openForm('Open Recurring Calendar Event')">
+            Confirm
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <!-- END RECURRING EVENT CONFIMATION DIALOG -->
 
-  <!-- START CALENDAR FORM -->
-  <CalendarForm
-    :title="title"
-    :openForm="dialog.calendarForm"
-    @close="dialog.calendarForm = false"
-    @refresh="getCalendarByUserId"
-  />
-  <!-- END CALENDAR FORM -->
+    <!-- START OPERATION -->
+    <el-dialog v-model="dialog.operation" title="Event Details" width="500" center>
+      <div class="border p-3" style="border-radius: 20px">
+        <label class="fw-bold">Event Name: </label>
+        {{ calendarEvent.eventName }}
+        <br />
+        <label class="fw-bold mt-3">Description: </label>
+        {{ calendarEvent.eventDescription }}
+        <br />
+        <label class="fw-bold mt-3">Date/Time Start: </label>
+        {{ formatDateTime(calendarEvent.dateTimeStarted) }}
+        <br />
+        <label class="fw-bold mt-3">Date/Time End: </label>
+        {{ formatDateTime(calendarEvent.dateTimeEnded) }}
+      </div>
+
+      <template #footer>
+        <div class="dialog-footer d-flex justify-content-end">
+          <el-button @click="openForm('Open Calendar Event')"> Edit </el-button>
+          <el-button type="danger" @click="deleteCalendarEvent()"> Delete </el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <!-- END OPERATION -->
+
+    <!-- START CALENDAR EVENT FORM -->
+    <CalendarEventForm
+      :calendarEvent="calendarEvent"
+      :calendars="calendars"
+      :title="title"
+      :openForm="dialog.calendarEventForm"
+      @close="dialog.calendarEventForm = false"
+      :handleDateRange="form.dateRange"
+      @refresh="(getCalendarEvent(), (dialog.operation = false))"
+      :selectedDayList="selectedDays"
+      :daysList="daysList"
+    />
+    <!-- END CALENDAR EVENT FORM -->
+
+    <!-- START CALENDAR FORM -->
+    <CalendarForm
+      :title="title"
+      :openForm="dialog.calendarForm"
+      @close="dialog.calendarForm = false"
+      @refresh="getCalendarByUserId"
+    />
+    <!-- END CALENDAR FORM -->
+  </el-card>
 </template>
 <script>
 import axios from 'axios'
@@ -371,10 +379,10 @@ export default {
   computed: {
     attributes() {
       return [
-        {
-          dot: 'red',
-          dates: this.calendarOptions.events,
-        },
+        // {
+        //   dot: 'bar',
+        //   dates: this.calendarOptions.events,
+        // },
         {
           highlight: {
             start: { fillMode: 'outline' },
@@ -392,9 +400,9 @@ export default {
       this.dialog.calendarEventForm = true
     },
     todayCustom() {
+      this.pickerKey++
       this.today = new Date()
       this.calendarApi.today()
-      this.pickerKey++
       this.getCalendarEvent()
     },
     prevCustom() {
@@ -918,7 +926,6 @@ export default {
   mounted() {
     this.calendarApi = this.$refs.refCalendar.getApi()
     this.user = JSON.parse(localStorage.getItem('user'))
-    console.log(this.user)
     if (this.user == null) {
       window.location.replace('/')
     }

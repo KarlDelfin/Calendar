@@ -505,7 +505,7 @@
         }
       }
     },
-    "/api/UserAssignment/{userId}": {
+    "/api/UserAssignment/User/{userId}": {
       "put": {
         "tags": [
           "UserAssignment"
